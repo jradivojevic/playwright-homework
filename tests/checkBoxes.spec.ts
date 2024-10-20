@@ -10,7 +10,8 @@ test.describe('Input fields', () => {
     test('Test Case 1: Validate selected specialties', async ({ page }) => {
         await expect(page.getByRole('button', { name: 'Veterinarians' })).toHaveText('Veterinarians');
         await page.getByRole('row', { name: "Helen Leary" }).getByRole('button', { name: "Edit Vet" }).click()
-        await expect(page.locator(".selected-specialties")).toHaveText('radiology')
+        const selectedSpecialist = page.locator(".selected-specialties")
+        await expect(selectedSpecialist).toHaveText('radiology')
         await page.locator('.dropdown-arrow').click()
         const checkBoxRadiology = page.getByRole('checkbox', { name: "radiology" })
         const checkBoxSurgery = page.getByRole('checkbox', { name: "surgery" })
@@ -20,9 +21,9 @@ test.describe('Input fields', () => {
         expect(await checkBoxDentistry.isChecked()).toBeFalsy()
         await checkBoxSurgery.check()
         await checkBoxRadiology.uncheck()
-        await expect(page.locator(".selected-specialties")).toHaveText('surgery')
+        await expect(selectedSpecialist).toHaveText('surgery')
         await checkBoxDentistry.check()
-        await expect(page.locator(".selected-specialties")).toHaveText('surgery, dentistry')
+        await expect(selectedSpecialist).toHaveText('surgery, dentistry')
     });
 
     test('Test Case 2: Select all specialties', async ({ page }) => {
