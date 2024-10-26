@@ -10,8 +10,6 @@ test.describe('Lists and Drop Downs', () => {
         await page.goto('/')
         await page.getByRole('button', { name: 'Owners' }).click()
         await page.getByRole('link', { name: 'Search' }).click()
-        //const ownersButton = page.locator('.dropdown', {hasText: "Search"})
-        //await expect(ownersButton).toContainText('Owners')
         await expect(page.getByRole('heading', { name: 'Owners' })).toHaveText('Owners');
         petTypeInputField = page.locator('#type')
         petNameInputField = page.locator('#name')
@@ -25,7 +23,6 @@ test.describe('Lists and Drop Downs', () => {
         await expect(petNameInputField).toHaveValue('Leo')
         await expect(page.locator('#owner_name')).toHaveValue('George Franklin')
         await expect(petTypeField).toHaveValue('cat')
-        await petTypeInputField.click()
         const typesOfPets = ['cat', 'dog', 'lizard', 'snake', 'bird', 'hamster']
 
         for (const pet of typesOfPets) {
@@ -54,8 +51,6 @@ test.describe('Lists and Drop Downs', () => {
         await expect(petTypeField).toHaveValue('dog');
         await updateButton.click()
         await expect(page.locator('.dl-horizontal', { hasText: "Rosy" })).toContainText('dog')
-      
-
     })
 
 })
