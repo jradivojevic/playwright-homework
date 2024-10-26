@@ -1,16 +1,16 @@
-import { test, expect } from '@playwright/test';
+import { test, expect, Locator } from '@playwright/test';
 
 test.describe('Lists and Drop Downs', () => {
     //declare variables
-    let petTypeInputField
-    let petNameInputField
-    let petTypeField
+    let petTypeInputField: Locator
+    let petNameInputField: Locator
+    let petTypeField: Locator
 
     test.beforeEach(async ({ page }) => {
         await page.goto('/')
         await page.getByRole('button', { name: 'Owners' }).click()
         await page.getByRole('link', { name: 'Search' }).click()
-        await expect(page.getByRole('heading', { name: 'Owners' })).toHaveText('Owners');
+        await expect(page.getByRole('heading')).toHaveText('Owners')
         petTypeInputField = page.locator('#type')
         petNameInputField = page.locator('#name')
         petTypeField = page.locator('#type1')
@@ -28,13 +28,13 @@ test.describe('Lists and Drop Downs', () => {
         for (const pet of typesOfPets) {
             await petTypeInputField.selectOption(pet)
             await expect(petTypeField).toHaveValue(pet)
-            await petTypeInputField.click()
         }
     })
 
     test('Test Case 2: Validate the pet type update', async ({ page }) => {
         await page.getByRole('link', { name: 'Eduardo Rodriquez' }).click()
-        const editButton = page.locator('.dl-horizontal', { hasText: "Rosy" }).getByRole('button', { name: 'Edit Pet' })
+        const petRosySection = page.locator('.dl-horizontal', { hasText: "Rosy" })
+        const editButton = petRosySection.getByRole('button', { name: 'Edit Pet' })
         await editButton.click()
         await expect(petNameInputField).toHaveValue('Rosy')
         await expect(petTypeField).toHaveValue('dog')
@@ -44,13 +44,13 @@ test.describe('Lists and Drop Downs', () => {
         await expect(petTypeInputField).toHaveValue('bird')
         const updateButton = page.getByRole('button', { name: 'Update Pet' })
         await updateButton.click()
-        await expect(page.locator('.dl-horizontal', { hasText: "Rosy" })).toContainText('bird')
+        await expect(petRosySection).toContainText('bird')
         await editButton.click()
         await petTypeInputField.selectOption('dog')
         await expect(petTypeInputField).toHaveValue('dog');
         await expect(petTypeField).toHaveValue('dog');
         await updateButton.click()
-        await expect(page.locator('.dl-horizontal', { hasText: "Rosy" })).toContainText('dog')
+        await expect(petRosySection).toContainText('dog')
     })
 
 })
