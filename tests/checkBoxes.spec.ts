@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 
-test.describe('Input fields', () => {
+test.describe('CheckBoxes', () => {
     test.beforeEach(async ({ page }) => {
         await page.goto('/')
         await page.getByRole('button', { name: 'Veterinarians' }).click()
