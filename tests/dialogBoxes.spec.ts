@@ -10,7 +10,7 @@ test.describe('Dialog boxes', () => {
         await page.getByRole('link', { name: 'Pet Types' }).click()
         await expect(page.getByRole('heading')).toHaveText('Pet Types')
         await page.getByRole('button', { name: "Add" }).click()
-        await expect(page.locator('app-pettype-add')).toContainText('New Pet Type')
+        await expect(page.locator('app-pettype-add h2')).toHaveText('New Pet Type')
         await expect(page.locator('label')).toHaveText("Name")
         await expect(page.locator('#name')).toBeVisible()
         await page.locator('#name').fill('pig')
