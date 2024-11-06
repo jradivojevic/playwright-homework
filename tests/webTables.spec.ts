@@ -14,9 +14,6 @@ test.describe('Web Tables', () => {
         const petLuckySection = page.locator('.dl-horizontal', { hasText: "Lucky" })
         await expect(petLuckySection).toContainText('Lucky')
         await expect(page.locator('td', { hasText: 'Monona' })).toHaveText('Monona')
-
-
-
     })
 
     test('Test Case 2: Validate owners count of the Madison city', async ({ page }) => {
@@ -36,30 +33,23 @@ test.describe('Web Tables', () => {
         await page.locator('#lastName').clear()
         await page.locator('#lastName').fill('Davis')
         await expect(page.locator('tbody').getByRole('cell', { name: 'Betty Davis' })).toContainText('Davis')
-        const lastNames = [ "Es", "Playwright"]
+        const lastNames = ["Es", "Playwright"]
 
-    for (const lastName of lastNames) {
-        await page.getByRole('textbox').fill(lastName)
-        await page.getByText('Find Owner').click()
+        for (const lastName of lastNames) {
+            await page.getByRole('textbox').fill(lastName)
+            await page.getByText('Find Owner').click()
 
 
-        const rows = await page.locator('.ownerFullName').all()
-        for (const row of rows) {
-            if (lastName !== 'Playwright') {
-                await expect(row).toContainText(lastName)
-            }
-            else {
-                await expect(page.locator('div.container.xd-container div').last()).toHaveText('No owners with LastName starting with \"Playwright\"')
+            const rows = await page.locator('.ownerFullName').all()
+            for (const row of rows) {
+                if (lastName !== 'Playwright') {
+                    await expect(row).toContainText(lastName)
+                }
+                else {
+                    await expect(page.locator('div.container.xd-container div').last()).toHaveText('No owners with LastName starting with \"Playwright\"')
+                }
             }
         }
-    }
-        
-       
-
-
-
-
-
     })
 
     test('Test Case 4: Validate phone number and pet name on the Owner Information page ', async ({ page }) => {
@@ -70,10 +60,7 @@ test.describe('Web Tables', () => {
         await targetRow.getByRole('link', { name: 'Peter McTavish' }).click()
         await expect(page.getByRole('cell', { name: '6085552765' })).toContainText('6085552765')
         await expect(page.locator('div.container.xd-container').locator('dd').first()).toContainText(petName!)
-
     })
-
-
 
     test('Test Case 5: Validate pets of the Madison city ', async ({ page }) => {
         await page.getByRole('button', { name: 'Owners' }).click()
@@ -88,11 +75,8 @@ test.describe('Web Tables', () => {
             const petsValue = await row.locator('td').nth(4).textContent() || ''
             actualPetsList.push(petsValue)
         }
-
         expect(actualPetsList.sort()).toEqual(expectedPetsList.sort())
     })
-
-
 
     test('Test Case 6: Validate specialty update ', async ({ page }) => {
         await page.getByRole('button', { name: 'VETERINARIANS ' }).click()
@@ -100,7 +84,6 @@ test.describe('Web Tables', () => {
         await expect(page.getByRole('row', { name: 'Rafael Ortega' }).getByRole('cell').nth(1)).toHaveText('surgery')
         await page.getByRole('link', { name: 'Specialties' }).click()
         await expect(page.getByRole('heading')).toHaveText('Specialties')
-
         await page.waitForSelector('tbody')
         const allRows = await page.locator('tbody tr').all()
         for (let row of allRows) {
@@ -109,7 +92,6 @@ test.describe('Web Tables', () => {
                 break
             }
         }
-
         await expect(page.locator('h2')).toHaveText('Edit Specialty')
         const specialtyInput = page.locator('#name')
         await expect(specialtyInput).toHaveValue('surgery')
@@ -140,11 +122,10 @@ test.describe('Web Tables', () => {
         await expect(page.locator('tbody tr').last().getByRole('textbox')).toHaveValue('oncology')
         const allSpecialtyInputs = await page.locator('tbody tr').getByRole('textbox').all()
         const allSpecialties: string[] = []
-    
         for (const input of allSpecialtyInputs) {
             allSpecialties.push(await input.inputValue())
         }
-    
+
         await page.getByRole('button', { name: 'VETERINARIANS ' }).click()
         await page.getByRole('link', { name: 'All' }).click()
         await page.getByRole('row', { name: 'Sharon Jenkins' }).getByText('Edit Vet').click()
@@ -160,9 +141,6 @@ test.describe('Web Tables', () => {
         await page.getByRole('button', { name: 'VETERINARIANS ' }).click()
         await page.getByRole('link', { name: 'All' }).click()
         await expect(page.getByRole('row', { name: 'Sharon Jenkins' }).getByRole('cell').nth(1)).toBeEmpty()
-
-
-
     })
 
 })
