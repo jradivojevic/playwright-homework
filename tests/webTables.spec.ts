@@ -9,11 +9,9 @@ test.describe('Web Tables', () => {
     test('Test Case 1: Validate the pet name city of the owner', async ({ page }) => {
         await page.getByRole('button', { name: 'Owners' }).click()
         await page.getByRole('link', { name: 'Search' }).click()
-        await page.getByRole('link', { name: 'Jeff Black' }).click()
-        await expect(page.locator('.ownerFullName')).toHaveText('Jeff Black')
-        const petLuckySection = page.locator('.dl-horizontal', { hasText: "Lucky" })
-        await expect(petLuckySection).toContainText('Lucky')
-        await expect(page.locator('td', { hasText: 'Monona' })).toHaveText('Monona')
+        const taretRow = page.getByRole('row', { name: 'Jeff Black' })
+        await expect(taretRow.locator('td').nth(2)).toHaveText('Monona')
+        await expect(taretRow.locator('td').nth(4)).toHaveText('Lucky')
     })
 
     test('Test Case 2: Validate owners count of the Madison city', async ({ page }) => {
@@ -22,22 +20,24 @@ test.describe('Web Tables', () => {
         await expect(page.getByRole('row', { name: 'Madison' })).toHaveCount(4)
     })
 
-
-
     test('Test Case 3: Validate search by Last Name', async ({ page }) => {
         await page.getByRole('button', { name: 'Owners' }).click()
         await page.getByRole('link', { name: 'Search' }).click()
-        await page.locator('#lastName').fill('Black')
+        const ownersLastName = page.locator('#lastName')
+        await ownersLastName.fill('Black')
         await page.getByRole('button', { name: 'Find Owner' }).click()
-        await expect(page.locator('tbody').getByRole('cell', { name: 'Jeff Black' })).toContainText('Black')
-        await page.locator('#lastName').clear()
-        await page.locator('#lastName').fill('Davis')
-        await expect(page.locator('tbody').getByRole('cell', { name: 'Betty Davis' })).toContainText('Davis')
+        await expect(page.getByRole('row', { name: '1450 Oak Blvd.' }).locator('td').nth(0)).toContainText('Black')
+        await ownersLastName.clear()
+        await ownersLastName.fill('Davis')
+        await page.getByRole('button', { name: 'Find Owner' }).click()
+        await expect(page.locator('td').nth(0)).toContainText('Davis')
+
         const lastNames = ["Es", "Playwright"]
 
         for (const lastName of lastNames) {
-            await page.getByRole('textbox').fill(lastName)
+            await ownersLastName.fill(lastName)
             await page.getByText('Find Owner').click()
+            await page.waitForSelector('.ownerFullName')
 
 
             const rows = await page.locator('.ownerFullName').all()
@@ -55,10 +55,10 @@ test.describe('Web Tables', () => {
     test('Test Case 4: Validate phone number and pet name on the Owner Information page ', async ({ page }) => {
         await page.getByRole('button', { name: 'Owners' }).click()
         await page.getByRole('link', { name: 'Search' }).click()
-        const targetRow = page.getByRole('row', { name: '6085552765' })
-        const petName = await targetRow.locator('td').nth(4).textContent()
-        await targetRow.getByRole('link', { name: 'Peter McTavish' }).click()
-        await expect(page.getByRole('cell', { name: '6085552765' })).toContainText('6085552765')
+        const phoneNumber = '6085552765'
+        const petName = await page.getByRole('row', { name: '2387 S. Fair Way' }).locator('td').nth(4).textContent()
+        await page.getByRole('row', { name: '2387 S. Fair Way' }).getByRole('link', { name: 'Peter McTavish' }).click()
+        await expect(page.getByRole('row', { name: 'Telephone' }).getByRole('cell').last()).toHaveText(phoneNumber)
         await expect(page.locator('div.container.xd-container').locator('dd').first()).toContainText(petName!)
     })
 
@@ -110,8 +110,6 @@ test.describe('Web Tables', () => {
         await expect(specialtyInput).toHaveValue('dermatology')
         await specialtyInput.fill('surgery')
         await page.getByText('Update').click()
-
-
     })
 
     test('Test Case 7: validate specialty lists', async ({ page }) => {
