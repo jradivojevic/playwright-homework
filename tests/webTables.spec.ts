@@ -23,22 +23,12 @@ test.describe('Web Tables', () => {
     test('Test Case 3: Validate search by Last Name', async ({ page }) => {
         await page.getByRole('button', { name: 'Owners' }).click()
         await page.getByRole('link', { name: 'Search' }).click()
-        const ownersLastName = page.locator('#lastName')
-        await ownersLastName.fill('Black')
-        await page.getByRole('button', { name: 'Find Owner' }).click()
-        await expect(page.getByRole('row', { name: '1450 Oak Blvd.' }).locator('td').nth(0)).toContainText('Black')
-        await ownersLastName.clear()
-        await ownersLastName.fill('Davis')
-        await page.getByRole('button', { name: 'Find Owner' }).click()
-        await expect(page.locator('td').nth(0)).toContainText('Davis')
-
-        const lastNames = ["Es", "Playwright"]
+        const lastNames = ["Black", "Davis", "Es", "Playwright"]
 
         for (const lastName of lastNames) {
-            await ownersLastName.fill(lastName)
+            await page.locator('#lastName').fill(lastName)
             await page.getByText('Find Owner').click()
-            await page.waitForSelector('.ownerFullName')
-
+            await page.waitForResponse("https://petclinic-api.bondaracademy.com/petclinic/api/owners?lastName*")
 
             const rows = await page.locator('.ownerFullName').all()
             for (const row of rows) {
@@ -55,10 +45,9 @@ test.describe('Web Tables', () => {
     test('Test Case 4: Validate phone number and pet name on the Owner Information page ', async ({ page }) => {
         await page.getByRole('button', { name: 'Owners' }).click()
         await page.getByRole('link', { name: 'Search' }).click()
-        const phoneNumber = '6085552765'
-        const petName = await page.getByRole('row', { name: '2387 S. Fair Way' }).locator('td').nth(4).textContent()
-        await page.getByRole('row', { name: '2387 S. Fair Way' }).getByRole('link', { name: 'Peter McTavish' }).click()
-        await expect(page.getByRole('row', { name: 'Telephone' }).getByRole('cell').last()).toHaveText(phoneNumber)
+        const petName = await page.getByRole('row', { name: '6085552765' }).locator('td').nth(4).textContent()
+        await page.getByRole('row', { name: '6085552765' }).getByRole('link', { name: 'Peter McTavish' }).click()
+        await expect(page.getByRole('row', { name: 'Telephone' }).getByRole('cell').last()).toHaveText("6085552765")
         await expect(page.locator('div.container.xd-container').locator('dd').first()).toContainText(petName!)
     })
 
