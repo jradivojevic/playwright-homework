@@ -13,7 +13,6 @@ test.describe('Date Selector', () => {
         await page.getByRole('link', { name: 'Search' }).click()
         await page.getByRole('link', { name: 'Harold Davis' }).click()
         await page.getByRole('button', { name: 'Add New Pet' }).click()
-        await page.locator('#name').click()
         const icon = page.locator('#name + .form-control-feedback')
         await page.locator('#name').fill('Tom')
         await expect(icon).toHaveClass(/glyphicon-ok/)
@@ -30,13 +29,13 @@ test.describe('Date Selector', () => {
         await expect(page.locator('[name="birthDate"]')).toHaveValue(dateToAssert)
         await page.locator('#type').selectOption('dog')
         await page.getByRole('button', { name: 'Save Pet' }).click()
-        const petField = page.locator('td', { has: page.getByText('Tom') })
-        await expect(petField.locator('dd').nth(0)).toHaveText('Tom')
-        await expect(petField.locator('dd').nth(1)).toHaveText(`${birthYear}-${birthMonth}-${birthDay}`)
-        await expect(petField.locator('dd').nth(2)).toHaveText('dog')
-        await petField.getByRole('button', { name: 'Delete Pet' }).last().click()
-        expect(petField).not.toBeVisible
-    })
+        const tomPetDetailsSection = page.locator('td', { hasText: 'Tom' })
+        await expect(tomPetDetailsSection.locator('dd').nth(0)).toHaveText('Tom')
+        await expect(tomPetDetailsSection.locator('dd').nth(1)).toHaveText(`${birthYear}-${birthMonth}-${birthDay}`)
+        await expect(tomPetDetailsSection.locator('dd').nth(2)).toHaveText('dog')
+        await tomPetDetailsSection.getByRole('button', { name: 'Delete Pet' }).last().click()
+        await expect(tomPetDetailsSection).not.toBeVisible()
+    });
 
     test('Test Case 2: Select the dates of visits and validate dates order', async ({ page }) => {
         await page.getByRole('button', { name: 'Owners' }).click()
@@ -77,14 +76,13 @@ test.describe('Date Selector', () => {
         const laterAppointmentDateforSamathasPet = await petAllAppointments.nth(1).locator('td').first().textContent()
         const currentAppointmentDateforSamathasPet = await petAllAppointments.nth(2).locator('td').first().textContent()
         expect(Date.parse(currentAppointmentDateforSamathasPet!) < Date.parse(laterAppointmentDateforSamathasPet!)).toBeTruthy()
-        await petsAndVisitsRowSamatha.locator('app-visit-list tr', { hasText: expectedDermatologyAppointmentDate }).getByText('Delete Visit').click()
-        await petsAndVisitsRowSamatha.locator('app-visit-list tr', { hasText: expectedMassageAppointmentDate }).getByText('Delete Visit').click()
+        await petAllAppointments.filter({ hasText: expectedDermatologyAppointmentDate }).getByText('Delete Visit').click()
+        await petAllAppointments.filter({ hasText: expectedMassageAppointmentDate }).getByText('Delete Visit').click()
         await page.waitForResponse("https://petclinic-api.bondaracademy.com/petclinic/api/visits/*")
-        for (const row of await petAllAppointments.all()) {
-            expect(await row.textContent()).not.toContain(expectedDermatologyAppointmentDate)
-            expect(await row.textContent()).not.toContain(expectedMassageAppointmentDate)
-        }
+        const samanthaVisitDates = await petAllAppointments.allTextContents()
+        expect(samanthaVisitDates).not.toContain(expectedDermatologyAppointmentDate)
+        expect(samanthaVisitDates).not.toContain(expectedMassageAppointmentDate)
 
-    })
+    });
 
 })
